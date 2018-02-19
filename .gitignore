@@ -4,3 +4,4 @@ Build
 *.csproj
 *.sln
 .vs
+obj

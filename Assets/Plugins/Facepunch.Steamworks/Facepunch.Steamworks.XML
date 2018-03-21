@@ -32,6 +32,11 @@
             This is useful for things like tests or command line utilities etc.
             </summary>
         </member>
+        <member name="F:Facepunch.Steamworks.BaseSteamworks.OnAnyCallback">
+            <summary>
+            Debug function, called for every callback. Only really used to confirm that callbacks are working properly.
+            </summary>
+        </member>
         <member name="P:Facepunch.Steamworks.Client.Instance">
             <summary>
             A singleton accessor to get the current client instance.
@@ -486,7 +491,7 @@
         </member>
         <member name="M:Facepunch.Steamworks.Lobby.Create(Facepunch.Steamworks.Lobby.Type,System.Int32)">
             <summary>
-            Creates a lobby and returns the created lobby. You auto join the created lobby. The lobby is stored in Client.CurrentLobby if successful.
+            Creates a lobby and returns the created lobby. You auto join the created lobby. The lobby is stored in Client.Lobby.CurrentLobby if successful.
             </summary>
             <param name="lobbyType">The Lobby.Type of Lobby to be created</param>
             <param name="maxMembers">The maximum amount of people you want to be able to be in this lobby, including yourself</param>
@@ -608,9 +613,19 @@
             </summary>
             <param name="friendID">ulong ID of person to invite</param>
         </member>
+        <member name="M:Facepunch.Steamworks.Lobby.OpenFriendInviteOverlay">
+            <summary>
+            Activates the steam overlay to invite friends to the CurrentLobby the user is in.
+            </summary>
+        </member>
         <member name="F:Facepunch.Steamworks.Lobby.OnUserInvitedToLobby">
             <summary>
             Called when a user invites the current user to a lobby. The first parameter is the lobby the user was invited to, the second is the CSteamID of the person who invited this user
+            </summary>
+        </member>
+        <member name="F:Facepunch.Steamworks.Lobby.OnLobbyJoinRequested">
+            <summary>
+            Called when a user accepts an invitation to a lobby while the game is running. The parameter is a lobby id.
             </summary>
         </member>
         <member name="M:Facepunch.Steamworks.Lobby.OnLobbyJoinRequestedAPI(SteamNative.GameLobbyJoinRequested_t)">
@@ -1180,6 +1195,11 @@
             Serialized data exprires after an hour. This is the time the value in SerializedItems will expire.
             </summary>
         </member>
+        <member name="M:Facepunch.Steamworks.Inventory.onDefinitionsUpdated(SteamNative.SteamInventoryDefinitionUpdate_t)">
+            <summary>
+            Should get called when the definitions get updated from Steam.
+            </summary>
+        </member>
         <member name="M:Facepunch.Steamworks.Inventory.onFullUpdate(SteamNative.SteamInventoryFullUpdate_t)">
             <summary>
             We've received a FULL update
@@ -1216,6 +1236,11 @@
             <summary>
             Some definitions aren't sent to the client, and all aren't available on the server.
             Manually getting a Definition here lets you call functions on those definitions.
+            </summary>
+        </member>
+        <member name="M:Facepunch.Steamworks.Inventory.FetchItemDefinitions">
+            <summary>
+            Fetch item definitions in case new ones have been added since we've initialized
             </summary>
         </member>
         <member name="M:Facepunch.Steamworks.Inventory.Update">
@@ -1983,9 +2008,16 @@
             the stats from the backend. If you didn't call it this will always return defaultValue.
             </summary>
         </member>
+        <member name="M:Facepunch.Steamworks.ServerStats.SetAchievement(System.UInt64,System.String)">
+            <summary>
+            Unlocks the specified achievement for the specified user. Must have called Refresh on a steamid first.
+            Remember to use Commit after use.
+            </summary>
+        </member>
         <member name="M:Facepunch.Steamworks.ServerStats.ClearAchievement(System.UInt64,System.String)">
             <summary>
             Resets the unlock status of an achievement for the specified user. Must have called Refresh on a steamid first.
+            Remember to use Commit after use.
             </summary>
         </member>
         <member name="M:Facepunch.Steamworks.ServerStats.GetAchievement(System.UInt64,System.String)">

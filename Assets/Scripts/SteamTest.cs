@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 using Facepunch.Steamworks;
+using System.Text;
 
 public class SteamTest : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class SteamTest : MonoBehaviour
     private Leaderboard leaderBoard;
 
     public SteamAvatar YourAvatar;
-    public SteamAvatar RandomAvatar;
+    public SteamAvatar[] RandomAvatar;
 
     IEnumerator Start()
 	{
@@ -19,6 +20,9 @@ public class SteamTest : MonoBehaviour
         //
         while ( Client.Instance == null )
             yield return null;
+
+
+        Client.Instance.OnAnyCallback += DebugPrintSteamCallback;
 
         YourAvatar.Fetch( Client.Instance.SteamId );
 
@@ -41,12 +45,31 @@ public class SteamTest : MonoBehaviour
         //
         while ( true )
         {
-            ulong steamid = 76561197960279927 + (ulong) UnityEngine.Random.Range( 0, 100000 );
-            RandomAvatar.Fetch( steamid );
+            ulong steamid = 76561197960279927 + (ulong)UnityEngine.Random.Range( 0, 100000 );
 
-            yield return new WaitForSeconds( 20 );
+            foreach ( var a in RandomAvatar )
+            {
+                
+                a.Fetch( steamid );
+            }
+
+            yield return new WaitForSeconds( 11 );
         }
 	}
+
+    private void DebugPrintSteamCallback( object obj )
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.AppendLine( "<color=#88dd88>" + obj.GetType().Name + "</color>" );
+
+        foreach ( var f in obj.GetType().GetFields( System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance ) )
+        {
+            sb.AppendLine( "  <color=#aaaaaa>" + f.Name + ":</color>\t <color=#fffff>" + f.GetValue( obj ).ToString() + "</color>" );
+        }
+
+        Debug.Log( sb.ToString() );
+    }
 
     private void OnDestroy()
     {
